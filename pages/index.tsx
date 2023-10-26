@@ -62,9 +62,9 @@ const Home: React.FC = () => {
           <div className="p-8 bg-white rounded-xl shadow-xl w-96 transform hover:scale-105 transition-transform duration-300">
             <h1 className="text-3xl font-semibold mb-6 text-center">Dobro došli na našu stranicu!</h1>
             <div className="flex flex-col space-y-4">
-              <a href="/api/auth/login" className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full text-center">
+              <Link href="/api/auth/login" className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full text-center">
                 Nastavi
-              </a>
+              </Link>
             </div>
           </div>
         </div>
