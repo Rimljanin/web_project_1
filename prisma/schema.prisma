@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model competition {
+  id                                                           String              @id @db.VarChar
+  owner                                                        String              @db.VarChar
+  grading_system                                               String              @db.VarChar
+  name                                                         String              @db.VarChar
+  grading_system_competition_grading_systemTograding_system    grading_system      @relation("competition_grading_systemTograding_system", fields: [grading_system], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competition_grading_system")
+  user_owner                                                   user_owner          @relation(fields: [owner], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competition_owner")
+  player_player_competitionTocompetition                       player[]            @relation("player_competitionTocompetition")
+  results_results_competitionTocompetition                     results[]           @relation("results_competitionTocompetition")
+  table_competition_table_competition_competitionTocompetition table_competition[] @relation("table_competition_competitionTocompetition")
+}
+
+model grading_system {
+  id                                                     String        @id @db.VarChar
+  win                                                    Decimal       @db.Decimal
+  draw                                                   Decimal       @db.Decimal
+  loss                                                   Decimal       @db.Decimal
+  competition_competition_grading_systemTograding_system competition[] @relation("competition_grading_systemTograding_system")
+}
+
+model player {
+  id                                                 String              @id @db.VarChar
+  name                                               String              @db.VarChar
+  competition                                        String              @db.VarChar
+  competition_player_competitionTocompetition        competition         @relation("player_competitionTocompetition", fields: [competition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_competition")
+  results_results_competitor_oneToplayer             results[]           @relation("results_competitor_oneToplayer")
+  results_results_competitor_twoToplayer             results[]           @relation("results_competitor_twoToplayer")
+  table_competition_table_competition_playerToplayer table_competition[] @relation("table_competition_playerToplayer")
+}
+
+model results {
+  id                                           String      @id @db.VarChar
+  competitor_one                               String      @db.VarChar
+  competitor_two                               String      @db.VarChar
+  competitor_one_score                         Decimal?    @db.Decimal
+  competitor_two_score                         Decimal?    @db.Decimal
+  competition                                  String      @db.VarChar
+  round                                        Decimal     @db.Decimal
+  competition_results_competitionTocompetition competition @relation("results_competitionTocompetition", fields: [competition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competition_competition")
+  player_results_competitor_oneToplayer        player      @relation("results_competitor_oneToplayer", fields: [competitor_one], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competitor_one_player")
+  player_results_competitor_twoToplayer        player      @relation("results_competitor_twoToplayer", fields: [competitor_two], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competitor_two_player")
+}
+
+model table_competition {
+  id                                                     String      @id(map: "table_pkey") @db.VarChar
+  competition                                            String      @db.VarChar
+  player                                                 String      @db.VarChar
+  points                                                 Decimal     @db.Decimal
+  competition_table_competition_competitionTocompetition competition @relation("table_competition_competitionTocompetition", fields: [competition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "table_competition")
+  player_table_competition_playerToplayer                player      @relation("table_competition_playerToplayer", fields: [player], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "table_player")
+
+  @@unique([competition, player], map: "unique_competition_player")
+}
+
+model user_owner {
+  id          String        @id(map: "user_pkey") @db.VarChar
+  email       String        @unique(map: "email_unique") @db.VarChar
+  name        String?       @db.VarChar
+  competition competition[]
+}
