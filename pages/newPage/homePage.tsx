@@ -102,7 +102,7 @@ export default function Profile({ user }: ProfileProps) {
     router.back();
   };
 
-  const generateTable = async (competitionId) => {
+  const generateTable = async (competitionId: string) => {
     try {
       const response = await fetch('/api/generateTabel', {
         method: 'POST',
@@ -118,7 +118,11 @@ export default function Profile({ user }: ProfileProps) {
   
       console.log("Table generated successfully for competition", competitionId);
     } catch (error) {
-      console.error(error.message);
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
   

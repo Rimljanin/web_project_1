@@ -46,8 +46,10 @@ export default async function handleUpdatePoints(req: NextApiRequest, res: NextA
         let competitorOnePoints;
         let competitorTwoPoints;
       
-        const competitorOneScore = parseFloat(result.competitor_one_score.toString());
-        const competitorTwoScore = parseFloat(result.competitor_two_score.toString());
+       
+        const competitorOneScore = parseFloat(result.competitor_one_score!.toString());
+        const competitorTwoScore = parseFloat(result.competitor_two_score!.toString());
+
       
         console.log(competitorOneScore);
         console.log(competitorTwoScore);

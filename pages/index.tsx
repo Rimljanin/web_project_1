@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
 
+
+interface Competition {
+  id: string;
+  name: string;
+}
+
 const Home: React.FC = () => {
   const { user, error, isLoading } = useUser();
-  const [competitions, setCompetitions] = useState([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -24,9 +30,9 @@ const Home: React.FC = () => {
         <>
           <div className="absolute top-4 right-4">
             <h1 className="text-lg font-bold mb-4">Dobro došli, {user.name}!</h1>
-            <a href="/api/auth/logout" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
+            <Link href="/api/auth/logout" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
               Logout
-            </a>
+            </Link>
           </div>
 
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">

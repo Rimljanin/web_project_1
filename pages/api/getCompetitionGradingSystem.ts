@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../lib/prisma'; 
+import prisma from '../../lib/prisma';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const getCompetitionGradingSystem = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
 
   if (!id) {
@@ -30,3 +30,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ error: 'Failed to fetch competition grading system' });
   }
 };
+
+export default getCompetitionGradingSystem;

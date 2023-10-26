@@ -9,7 +9,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 
   try {
-    // First fetch the user based on email to get the ID
     const userOwner = await prisma.user_owner.findUnique({
       where: {
         email: email as string,

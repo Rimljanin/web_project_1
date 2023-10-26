@@ -96,18 +96,23 @@ const schedule = generateRoundRobin(participants);
 let roundNumber = 1;
 for (const round of schedule) {
     for (const match of round) {
-        const player1Id = (await prisma.player.findFirst({ where: { name: match[0], competition: competition.id } })).id;
-        const player2Id = (await prisma.player.findFirst({ where: { name: match[1], competition: competition.id } })).id;
-        
-        await prisma.results.create({
-            data: {
-                id: uuid(),
-                competitor_one: player1Id,
-                competitor_two: player2Id,
-                competition: competition.id,
-                round: roundNumber
-            }
-        });
+      const player1 = await prisma.player.findFirst({ where: { name: match[0], competition: competition.id } });
+      const player2 = await prisma.player.findFirst({ where: { name: match[1], competition: competition.id } });
+      
+      if (!player1 || !player2) {
+          throw new Error("One of the players was not found");
+      }
+      
+      await prisma.results.create({
+          data: {
+              id: uuid(),
+              competitor_one: player1.id,
+              competitor_two: player2.id,
+              competition: competition.id,
+              round: roundNumber,
+          },
+      });
+      
     }
     roundNumber++;
 }
@@ -115,10 +120,13 @@ for (const round of schedule) {
    
 res.json({ success: true, competitionId: competition.id });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: error.message });
-
+  } catch (error:unknown) {
+    if (error instanceof Error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: error.message });
+  } else {
+      console.error('An unexpected error occurred:', error);
+      res.status(500).json({ success: false, error: 'An unexpected error occurred' });
   }
-}
+}}
 

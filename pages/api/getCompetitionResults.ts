@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma'; 
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const getCompetitionResults = async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
 
     if (!id) {
@@ -36,3 +36,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(500).json({ error: 'Failed to fetch competition results' });
     }
 };
+
+export default getCompetitionResults;
