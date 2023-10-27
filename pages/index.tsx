@@ -11,6 +11,7 @@ interface Competition {
 const Home: React.FC = () => {
   const { user, error, isLoading } = useUser();
   const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [loadingCompetitions, setLoadingCompetitions] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
         .then(response => response.json())
         .then(data => setCompetitions(data))
         .catch(error => console.error("Error fetching competitions:", error));
+        setLoadingCompetitions(false)
     }
   }, [user]);
 
@@ -42,23 +44,27 @@ const Home: React.FC = () => {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-4 block w-full text-center">
                   Napravi novo natjecanje
                 </button>
-              </Link>
-              {competitions.length > 0 ? (
-                <>
-                  <h2 className="text-xl font-semibold mb-4">Vaša natjecanja</h2>
-                  {competitions.map(comp => (
-                    <Link href={`/competitions/${comp.id}`} key={comp.id}>
-                      <div className="bg-gray-200 hover:bg-gray-300 hover:shadow-lg transform hover:scale-101 transition-all mb-4 p-4 rounded flex items-center cursor-pointer">
-                        <span>{comp.name}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </>
+                </Link>
+              {loadingCompetitions ? (
+                <div>Loading...</div>
               ) : (
-                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-5 rounded">
-                  <p className="font-bold">Obavijest:</p>
-                  <p>Nemate natjecanja.</p>
-                </div>
+                competitions.length > 0 ? (
+                  <>
+                    <h2 className="text-xl font-semibold mb-4">Vaša natjecanja</h2>
+                    {competitions.map(comp => (
+                      <Link href={`/competitions/${comp.id}`} key={comp.id}>
+                        <div className="bg-gray-200 hover:bg-gray-300 hover:shadow-lg transform hover:scale-101 transition-all mb-4 p-4 rounded flex items-center cursor-pointer">
+                          <span>{comp.name}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                ) : (
+                  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-5 rounded">
+                    <p className="font-bold">Obavijest:</p>
+                    <p>Nemate natjecanja.</p>
+                  </div>
+                )
               )}
             </div>
           </div>
