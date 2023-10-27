@@ -50,11 +50,11 @@ export default function Profile({ user }: ProfileProps) {
 
   const addParticipant = () => {
     if (!currentParticipant) {
-      setErrorMessage("Moraju postojati natjecatelji.");
+      setErrorMessage("Participant name can't be empty.");
       return;
     }
     if (participants.includes(currentParticipant)) {
-      setErrorMessage("Nazivi natjecatelja moraju biti jedinstveni.");
+      setErrorMessage("Participant names must be unique.");
       return;
     }
     setParticipants(prev => [...prev, currentParticipant]);
@@ -69,6 +69,17 @@ export default function Profile({ user }: ProfileProps) {
   const handleCreateCompetition = async () => {
     toggleGeneratingState();
     setErrorMessage(null);
+
+    if (!competitionName || !winPoints || !drawPoints || !lossPoints) {
+      setErrorMessage("Please fill in all the fields.");
+      toggleGeneratingState();
+      return;
+    }
+    if (participants.length < 4 || participants.length > 8) {
+      setErrorMessage("Participants should be between 4 and 8.");
+      toggleGeneratingState();
+      return;
+    }
 
     try {
       const response = await fetch('/api/createCompetition', {
@@ -92,14 +103,14 @@ export default function Profile({ user }: ProfileProps) {
       }
 
       const data = await response.json();
-      if (!data.competitionId) {
+      console.log("New competition created:", data);
+      if (data.competitionId) {
+        await generateTable(data.competitionId);
+      } else {
         throw new Error("Failed to retrieve competition ID.");
       }
 
-      console.log("New competition created:", data);
-      await generateTable(data.competitionId);
       resetForm();
-      router.back();
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -108,23 +119,25 @@ export default function Profile({ user }: ProfileProps) {
       }
     } finally {
       toggleGeneratingState();
+      router.back();
     }
-  };
+};
+
 
   const generateTable = async (competitionId: string) => {
     try {
-      const response = await fetch('/api/generateTable', {
+      const response = await fetch('/api/generateTabel', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ competitionId })
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to generate the table.");
       }
-
+  
       console.log("Table generated successfully for competition", competitionId);
     } catch (error) {
       if (error instanceof Error) {
