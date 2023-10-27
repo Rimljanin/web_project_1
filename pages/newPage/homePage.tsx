@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { UserProfile } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/router';
+import { UserProfile } from '@auth0/nextjs-auth0/client';
 
 interface ProfileProps {
   user: UserProfile;
 }
 
 export default function Profile({ user }: ProfileProps) {
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [competitionName, setCompetitionName] = useState('');
   const [currentParticipant, setCurrentParticipant] = useState('');
   const [participants, setParticipants] = useState<string[]>([]);
@@ -19,58 +19,58 @@ export default function Profile({ user }: ProfileProps) {
 
   const router = useRouter();
 
-  const resetFormAndGoBack = () => {
-  
+  const resetForm = () => {
     setCompetitionName('');
-    setParticipants([]);
     setCurrentParticipant('');
+    setParticipants([]);
     setWinPoints('');
     setDrawPoints('');
     setLossPoints('');
     setErrorMessage(null);
+  };
 
+  const resetFormAndGoBack = () => {
+    resetForm();
     router.back();
   };
 
-  const toggleModal = () => {
-    setCompetitionName('');
-    setCurrentParticipant('');
-    setParticipants([]);
-    setWinPoints('');
-    setDrawPoints('');
-    setLossPoints('');
-    setErrorMessage(null);
-    setModalVisible(!isModalVisible);
+  const toggleGeneratingState = () => {
+    setIsGenerating(!isGenerating);
   };
 
   const isGenerirajDisabled = () => {
-    if (!competitionName || !winPoints || !drawPoints || !lossPoints) {
+    if (!competitionName || !winPoints || !drawPoints || !lossPoints || isGenerating) {
       return true;
     }
     if (participants.length < 4 || participants.length > 8) {
       return true;
     }
     return false;
-};
+  };
 
   const addParticipant = () => {
-    if (currentParticipant) {
-      setParticipants(prev => [...prev, currentParticipant]);
-      setCurrentParticipant(''); 
+    if (!currentParticipant) {
+      setErrorMessage("Moraju postojati natjecatelji.");
+      return;
     }
+    if (participants.includes(currentParticipant)) {
+      setErrorMessage("Nazivi natjecatelja moraju biti jedinstveni.");
+      return;
+    }
+    setParticipants(prev => [...prev, currentParticipant]);
+    setCurrentParticipant('');
+    setErrorMessage(null);
+  };
+
+  const removeParticipant = (participant: string) => {
+    setParticipants(participants.filter(p => p !== participant));
   };
 
   const handleCreateCompetition = async () => {
-    if (!competitionName || !winPoints || !drawPoints || !lossPoints) {
-      setErrorMessage("Please fill in all the fields.");
-      return;
-    }
-    if (participants.length < 4 || participants.length > 8) {
-      setErrorMessage("Participants should be between 4 and 8.");
-      return;
-    }
+    toggleGeneratingState();
     setErrorMessage(null);
-    {
+
+    try {
       const response = await fetch('/api/createCompetition', {
         method: 'POST',
         headers: {
@@ -87,35 +87,44 @@ export default function Profile({ user }: ProfileProps) {
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("New competition created:", data);
-        if (data.competitionId) {
-          await generateTable(data.competitionId);
-        }
-  
-        } else {
-          console.error("Failed to retrieve competition ID.");
-        }
-    };
-    toggleModal();
-    router.back();
+      if (!response.ok) {
+        throw new Error("Failed to create competition.");
+      }
+
+      const data = await response.json();
+      if (!data.competitionId) {
+        throw new Error("Failed to retrieve competition ID.");
+      }
+
+      console.log("New competition created:", data);
+      await generateTable(data.competitionId);
+      resetForm();
+      router.back();
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unexpected error occurred");
+      }
+    } finally {
+      toggleGeneratingState();
+    }
   };
 
   const generateTable = async (competitionId: string) => {
     try {
-      const response = await fetch('/api/generateTabel', {
+      const response = await fetch('/api/generateTable', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ competitionId })
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to generate the table.");
       }
-  
+
       console.log("Table generated successfully for competition", competitionId);
     } catch (error) {
       if (error instanceof Error) {
@@ -125,53 +134,86 @@ export default function Profile({ user }: ProfileProps) {
       }
     }
   };
-  
 
-return (
-  <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col justify-center items-center">
-    <div className="bg-white rounded-lg p-8 w-3/4 max-w-xl shadow-xl border border-gray-200 hover:border-gray-300 transition duration-300 relative">
-      
-      <input 
-        type="text"
-        className="border mb-2 p-2 w-full rounded transition duration-150 focus:border-blue-500 focus:outline-none"
-        placeholder="Competition Name" 
-        value={competitionName} 
-        onChange={e => setCompetitionName(e.target.value)} 
-      />
-      <div className="flex mb-2">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col justify-center items-center">
+      <div className="bg-white rounded-lg p-8 w-3/4 max-w-xl shadow-xl border border-gray-200 hover:border-gray-300 transition duration-300 relative">
+        
         <input 
-          type="text" 
-          className="border p-2 flex-grow mr-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none"
-          placeholder="Add Participant" 
-          value={currentParticipant} 
-          onChange={e => setCurrentParticipant(e.target.value)} 
+          type="text"
+          className="border mb-2 p-2 w-full rounded transition duration-150 focus:border-blue-500 focus:outline-none"
+          placeholder="Naziv natjecanja" 
+          value={competitionName} 
+          onChange={e => setCompetitionName(e.target.value)} 
         />
-        <button onClick={addParticipant} className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-150">+</button>
+        
+        <div className="flex mb-2">
+          <input 
+            type="text" 
+            className="border p-2 flex-grow mr-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none"
+            placeholder="Dodaj natjecatelja" 
+            value={currentParticipant} 
+            onChange={e => setCurrentParticipant(e.target.value)} 
+            onKeyPress={e => e.key === 'Enter' && addParticipant()}
+          />
+          <button onClick={addParticipant} className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-150">+</button>
+        </div>
+        
+        <div className="mb-4 bg-gray-50 rounded p-2">
+          {participants.map(participant => (
+            <div key={participant} className="flex items-center mb-2">
+              <div className="border p-2 flex-grow rounded bg-white">{participant}</div>
+              <button onClick={() => removeParticipant(participant)} className="bg-red-500 text-white p-2 ml-2 rounded hover:bg-red-700 transition duration-150">-</button>
+            </div>
+          ))}
+        </div>
+        
+        <input 
+          type="number" 
+          className="border p-2 w-full mb-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none" 
+          placeholder="Bodovi za pobijedu" 
+          value={winPoints} 
+          onChange={e => setWinPoints(e.target.value)} 
+        />
+        
+        <input 
+          type="number" 
+          className="border p-2 w-full mb-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none" 
+          placeholder="Bodovi za neriješeno" 
+          value={drawPoints} 
+          onChange={e => setDrawPoints(e.target.value)} 
+        />
+        
+        <input 
+          type="number" 
+          className="border p-2 w-full mb-4 rounded transition duration-150 focus:border-blue-500 focus:outline-none" 
+          placeholder="Bodovi za poraz" 
+          value={lossPoints} 
+          onChange={e => setLossPoints(e.target.value)} 
+        />
+        
+        {errorMessage && <div className="text-red-500 mb-2">{errorMessage}</div>}
+        
+        <button 
+          onClick={handleCreateCompetition}
+          disabled={isGenerirajDisabled()}
+          className={`bg-blue-600 text-white px-4 py-2 rounded transition duration-150 mb-2 mr-2 
+            ${isGenerirajDisabled() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}>
+          {isGenerating ? "Generiranje..." : "Generiraj"}
+        </button>
+        
+        <button 
+          onClick={resetFormAndGoBack} 
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-150">
+          Odustani
+        </button>
+        
       </div>
-      <div className="mb-4 bg-gray-50 rounded p-2">
-        {participants.map(participant => <div key={participant} className="border p-2 mb-2 rounded bg-white">{participant}</div>)}
-      </div>
-      <input type="number" className="border p-2 w-full mb-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none" placeholder="Points for Win" value={winPoints} onChange={e => setWinPoints(e.target.value)} />
-      <input type="number" className="border p-2 w-full mb-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none" placeholder="Points for Draw" value={drawPoints} onChange={e => setDrawPoints(e.target.value)} />
-      <input type="number" className="border p-2 w-full mb-4 rounded transition duration-150 focus:border-blue-500 focus:outline-none" placeholder="Points for Loss" value={lossPoints} onChange={e => setLossPoints(e.target.value)} />
-      {errorMessage && <div className="text-red-500 mb-2">{errorMessage}</div>}
-      <button 
-        onClick={handleCreateCompetition}
-        disabled={isGenerirajDisabled()}
-        className={`bg-blue-600 text-white px-4 py-2 rounded transition duration-150 mb-2 mr-2 
-          ${isGenerirajDisabled() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}>
-        Generate
-      </button>
-      <button onClick={resetFormAndGoBack} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-150">Cancel</button>
     </div>
-  </div>
-);
-
-}
-
-export const getServerSideProps = withPageAuthRequired();
-
-
-
-
-
+  );
+  
+  
+  }
+  
+  export const getServerSideProps = withPageAuthRequired();

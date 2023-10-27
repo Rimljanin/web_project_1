@@ -14,6 +14,7 @@ const CompetitionTable: React.FC = () => {
 
     const [tableData, setTableData] = useState<TableEntry[]>([]);
     const [competitionName, setCompetitionName] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (id) {
@@ -22,8 +23,12 @@ const CompetitionTable: React.FC = () => {
                 .then(data => {
                     setTableData(data.tableData);
                     setCompetitionName(data.competitionName);
+                    setIsLoading(false);
                 })
-                .catch(error => console.error("Error fetching competition table:", error));
+                .catch(error => {
+                    console.error("Error fetching competition table:", error);
+                    setIsLoading(false);
+                });
         }
     }, [id]);
 
@@ -35,33 +40,42 @@ const CompetitionTable: React.FC = () => {
     
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col items-center p-5">
-            <h1 className="text-2xl font-bold mb-5">Table for Competition: {competitionName}</h1>
-            <button onClick={handleCopyLink} className="mb-5 p-2 bg-blue-500 text-white rounded">
-                Kopiraj link tablice
-            </button>
-            <div className="w-full max-w-4xl bg-white p-6 rounded shadow-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {tableData.map((entry, index) => (
-                            <tr key={entry.playerId}>
-                                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{entry.playerName}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{entry.points}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {isLoading ? (
+                <div className="flex justify-center items-center h-full">
+                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+            ) : (
+                <>
+                    <h1 className="text-2xl font-bold mb-5">Tablica za natjecanje: {competitionName}</h1>
+                    <button onClick={handleCopyLink} className="mb-5 p-2 bg-blue-500 text-white rounded">
+                        Kopiraj link tablice
+                    </button>
+                    <div className="w-full max-w-4xl bg-white p-6 rounded shadow-lg">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Natjecatelj</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bodovi</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {tableData.map((entry, index) => (
+                                    <tr key={entry.playerId}>
+                                        <td className="px-6 py-4 whitespace-nowrap">{index + 1}.</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{entry.playerName}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{entry.points}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
+
 export default CompetitionTable;
 
 export const getServerSideProps = withPageAuthRequired();

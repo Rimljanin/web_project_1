@@ -60,7 +60,10 @@ const Competition: React.FC = () => {
                     body: JSON.stringify({ competitionId: id }),
                 });
 
-                toast.success('Rezultati su uspješno spremljeni i bodovi su ažurirani!');
+                toast.success('Rezultati su uspješno spremljeni i bodovi su ažurirani!', {
+                    onClose: () => setTimeout(() => router.push("/"), 1000),
+                  });
+                
             } catch (error) {
                 console.error("Error:", error);
                 toast.error("Došlo je do greške prilikom spremanja i ažuriranja.");
@@ -115,7 +118,7 @@ const Competition: React.FC = () => {
                         disabled={isSaving}
                         className={`px-4 py-2 rounded bg-blue-600 text-white ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
                     >
-                        {isSaving ? 'Saving...' : 'Save Results'}
+                        {isSaving ? 'Spremanje...' : 'Spremi rezultate'}
                     </button>
                 </div>
 
@@ -129,7 +132,7 @@ const Competition: React.FC = () => {
                         <button
                             onClick={() => router.push(`/table/${id}`)}
                             className="mt-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
-                            View Table
+                            Pregled tablice
                         </button>
                     )}
                 </div>
