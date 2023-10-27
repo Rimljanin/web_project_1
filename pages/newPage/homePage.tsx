@@ -150,8 +150,8 @@ export default function Profile({ user }: ProfileProps) {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col justify-center items-center">
-      <div className="bg-white rounded-lg p-8 w-3/4 max-w-xl shadow-xl border border-gray-200 hover:border-gray-300 transition duration-300 relative">
+    <div className="min-h-screen bg-blue-100 flex flex-col justify-center items-center">
+      <div className="bg-white rounded-lg p-8 w-3/4 max-w-xl shadow-xl border border-blue-200 hover:border-gray-300 transition duration-300 relative">
         
         <input 
           type="text"

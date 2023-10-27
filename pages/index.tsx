@@ -70,16 +70,26 @@ const Home: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-pink-300 via-purple-200 to-blue-300">
-          <div className="p-8 bg-white rounded-xl shadow-xl w-96 transform hover:scale-105 transition-transform duration-300">
-            <h1 className="text-3xl font-semibold mb-6 text-center">Dobro došli na našu stranicu!</h1>
-            <div className="flex flex-col space-y-4">
-              <Link href="/api/auth/login" className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full text-center">
+        <div className="min-h-screen flex items-center justify-center bg-light-blue-200 relative overflow-hidden">
+        <div className="absolute inset-0 flex flex-wrap justify-between items-center">
+          <div className="w-16 h-16 bg-blue-500 rounded-full animate-move"></div>
+          <div className="w-16 h-16 bg-blue-500 rounded-full animate-move delay-1000"></div>
+          <div className="w-16 h-16 bg-yellow-700 rounded-full animate-move delay-2000"></div>
+          <div className="w-16 h-16 bg-yellow-500 rounded-full animate-move delay-3000"></div>
+          <div className="w-16 h-16 bg-green-700 rounded-full animate-move delay-4000"></div>
+          <div className="w-16 h-16 bg-green-700 rounded-full animate-move delay-5000"></div>
+        </div>
+        
+        <div className="p-8 bg-white rounded-xl shadow-xl w-96 z-10">
+          <h1 className="text-3xl font-semibold mb-6 text-center">Dobro došli na stranicu za izradu i vođenje natjecanja!</h1>
+          <div className="flex flex-col space-y-4">
+          <Link href="/api/auth/login" className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full text-center">
                 Nastavi
               </Link>
-            </div>
           </div>
         </div>
+      </div>
+      
       )}
     </div>
   );
