@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { isCompetitionOwner } from '../api/isCompetitionOwner';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Result {
     id: string;
@@ -19,7 +21,7 @@ interface GradingSystem {
     loss: number;
 }
 
-const Competition: React.FC = () => {
+const Competition: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     const router = useRouter();
     const { id } = router.query;
 
@@ -67,9 +69,21 @@ const Competition: React.FC = () => {
                 toast.error("Došlo je do greške prilikom spremanja i ažuriranja.");
             }
             setIsSaving(false);
-            setTimeout(() => router.push("/"), 1000)
+            /*setTimeout(() => router.push("/"), 500)*/
         }
     };
+
+    if (!isOwner) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+              <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
+                <h1 className="text-2xl font-bold mb-4">Pristup odbijen</h1>
+                <p className="text-gray-600">Žao nam je, ali nemate potrebne ovlasti za pristup ovoj stranici. Ako smatrate da je došlo do greške, molimo vas da kontaktirate administratora.</p>
+              </div>
+            </div>
+          );
+          
+      }
 
 
     return (
@@ -142,4 +156,19 @@ const Competition: React.FC = () => {
 
 export default Competition;
 
-export const getServerSideProps = withPageAuthRequired();
+export const getServerSideProps = withPageAuthRequired({
+    async getServerSideProps(context) {
+      const { req, res } = context;
+      const competitionId = context.params?.id;
+  
+      if (typeof competitionId === 'string') {
+        const isOwner = await isCompetitionOwner({ req, res }, competitionId);
+        return {
+          props: { isOwner },
+        };
+      }
+  
+      return { props: { isOwner: false } };
+    },
+  });
+  

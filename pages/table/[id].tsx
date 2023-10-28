@@ -1,6 +1,9 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { isCompetitionOwner } from '../api/isCompetitionOwner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface TableEntry {
   playerId: number;
@@ -8,7 +11,7 @@ interface TableEntry {
   points: number;
 }
 
-const CompetitionTable: React.FC = () => {
+const CompetitionTable: React.FC <{ isOwner: boolean }> = ({ isOwner }) => {
     const router = useRouter();
     const { id } = router.query;
 
@@ -32,14 +35,34 @@ const CompetitionTable: React.FC = () => {
         }
     }, [id]);
 
+    
+      
     const handleCopyLink = () => {
         const publicUrl = `${window.location.origin}/public-table/${id}`;
         navigator.clipboard.writeText(publicUrl);
-        alert('Javni link kopiran na clipboard!');
+        toast.success('Kopiran Link', {
+            position: toast.POSITION.TOP_RIGHT,
+            
+        });
+          
     };
     
+
+    if (!isOwner) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+              <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
+                <h1 className="text-2xl font-bold mb-4">Pristup odbijen</h1>
+                <p className="text-gray-600">Žao nam je, ali nemate potrebne ovlasti za pristup ovoj stranici. Ako smatrate da je došlo do greške, molimo vas da kontaktirate administratora.</p>
+              </div>
+            </div>
+          );
+          
+      }
+
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col items-center p-5">
+             <ToastContainer />
             {isLoading ? (
                 <div className="flex justify-center items-center h-full">
                     <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
@@ -78,4 +101,18 @@ const CompetitionTable: React.FC = () => {
 
 export default CompetitionTable;
 
-export const getServerSideProps = withPageAuthRequired();
+export const getServerSideProps = withPageAuthRequired({
+    async getServerSideProps(context) {
+      const { req, res } = context;
+      const competitionId = context.params?.id;
+  
+      if (typeof competitionId === 'string') {
+        const isOwner = await isCompetitionOwner({ req, res }, competitionId);
+        return {
+          props: { isOwner },
+        };
+      }
+  
+      return { props: { isOwner: false } };
+    },
+  });
