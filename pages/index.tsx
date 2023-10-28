@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import SportsFootballIcon from '@mui/icons-material/SportsFootball';
+import SportsHockeyIcon from '@mui/icons-material/SportsHockey';
+import SportsCricketIcon from '@mui/icons-material/SportsCricket';
+import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
+import SportsHandballIcon from '@mui/icons-material/SportsHandball';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import SportsTennisIcon from '@mui/icons-material/SportsTennis';
+import SportsRugbyIcon from '@mui/icons-material/SportsRugby';
+import MovingIcon from './api/front-helper/movingIcon';
+import SportsBaseball from '@mui/icons-material/SportsBaseball';
+import SportsHandball from '@mui/icons-material/SportsHandball';
+import Filter1Icon from '@mui/icons-material/Filter1';
+import Filter2Icon from '@mui/icons-material/Filter2';
+import Filter3Icon from '@mui/icons-material/Filter3';
+import Filter4Icon from '@mui/icons-material/Filter4';
+import Filter5Icon from '@mui/icons-material/Filter5';
+import Filter6Icon from '@mui/icons-material/Filter6';
+import Filter7Icon from '@mui/icons-material/Filter7';
 
 
 interface Competition {
@@ -70,26 +89,63 @@ const Home: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="min-h-screen flex items-center justify-center bg-light-blue-200 relative overflow-hidden">
-        <div className="absolute inset-0 flex flex-wrap justify-between items-center">
-          <div className="w-16 h-16 bg-blue-500 rounded-full animate-move"></div>
-          <div className="w-16 h-16 bg-blue-500 rounded-full animate-move delay-1000"></div>
-          <div className="w-16 h-16 bg-yellow-700 rounded-full animate-move delay-2000"></div>
-          <div className="w-16 h-16 bg-yellow-500 rounded-full animate-move delay-3000"></div>
-          <div className="w-16 h-16 bg-green-700 rounded-full animate-move delay-4000"></div>
-          <div className="w-16 h-16 bg-green-700 rounded-full animate-move delay-5000"></div>
-        </div>
-        
-        <div className="p-8 bg-white rounded-xl shadow-xl w-96 z-10">
-          <h1 className="text-3xl font-semibold mb-6 text-center">Dobro došli na stranicu za izradu i vođenje natjecanja!</h1>
-          <div className="flex flex-col space-y-4">
-          <Link href="/api/auth/login" className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full text-center">
-                Nastavi
-              </Link>
+        <div className="min-h-screen bg-space-dark flex items-center justify-center relative overflow-hidden">
+          <MovingIcon IconComponent={SportsHandball} startPosition={{ x: 1300, y: 700 }} />
+          <MovingIcon IconComponent={SportsBaseballIcon} startPosition={{ x: 400, y: 100 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 700, y: 100 }} />
+          <MovingIcon IconComponent={SportsBaseball} startPosition={{ x: 1000, y: 100 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 1300, y: 100 }} />
+              
+          <MovingIcon IconComponent={SportsTennisIcon} startPosition={{ x: 1300, y: 300 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 100, y: 300 }} />
+          <MovingIcon IconComponent={SportsHockeyIcon} startPosition={{ x: 400, y: 300 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 700, y: 300 }} />
+          <MovingIcon IconComponent={SportsBaseballIcon} startPosition={{ x: 1000, y: 300 }} />
+          <MovingIcon IconComponent={SportsHandballIcon} startPosition={{ x: 1300, y: 300 }} />
+
+          <MovingIcon IconComponent={SportsTennisIcon} startPosition={{ x: 100, y: 300 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 100, y: 300 }} />
+          <MovingIcon IconComponent={SportsHockeyIcon} startPosition={{ x: 1400, y: 400 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 1700, y: 500 }} />
+          <MovingIcon IconComponent={SportsBaseballIcon} startPosition={{ x: 1800, y: 600 }} />
+          <MovingIcon IconComponent={SportsHandballIcon} startPosition={{ x: 2000, y: 700 }} />
+              
+          <MovingIcon IconComponent={SportsVolleyballIcon} startPosition={{ x: 100, y: 500 }} />
+          <MovingIcon IconComponent={SportsRugbyIcon} startPosition={{ x: 400, y: 500 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 700, y: 500 }} />
+          <MovingIcon IconComponent={SportsHockeyIcon} startPosition={{ x: 1000, y: 500 }} />
+          <MovingIcon IconComponent={SportsRugbyIcon} startPosition={{ x: 120, y: 200 }} />
+
+          <MovingIcon IconComponent={SportsTennisIcon} startPosition={{ x: 700, y: 700 }} />    
+          <MovingIcon IconComponent={SportsHandballIcon} startPosition={{ x: 100, y: 700 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 400, y: 700 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 700, y: 700 }} />
+          <MovingIcon IconComponent={SportsHockeyIcon} startPosition={{ x: 1000, y: 700 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 1300, y: 700 }} />
+
+          <MovingIcon IconComponent={SportsSoccerIcon} startPosition={{ x: 100, y: 200 }} />
+          <MovingIcon IconComponent={SportsHandballIcon} startPosition={{ x: 1700, y: 700 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 400, y: 700 }} />
+          <MovingIcon IconComponent={SportsFootballIcon} startPosition={{ x: 700, y: 700 }} />
+          <MovingIcon IconComponent={SportsHockeyIcon} startPosition={{ x: 1000, y: 700 }} />
+          <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 1300, y: 700 }} />
+
+          <MovingIcon IconComponent={Filter1Icon} startPosition={{ x: 250, y: 250 }} />
+          <MovingIcon IconComponent={Filter2Icon} startPosition={{ x: 550, y: 550 }} />
+          <MovingIcon IconComponent={Filter3Icon} startPosition={{ x: 1800, y: 850 }} />
+          <MovingIcon IconComponent={Filter4Icon} startPosition={{ x: 150, y: 150 }} />
+          <MovingIcon IconComponent={Filter5Icon} startPosition={{ x: 1500, y: 150 }} />
+          <MovingIcon IconComponent={Filter6Icon} startPosition={{ x: 1750, y: 500 }} />
+          <MovingIcon IconComponent={Filter7Icon} startPosition={{ x: 2050, y: 700 }} />
+
+          <div className="p-8 bg-white rounded-xl shadow-xl w-96 z-10 text-center">
+            <h1 className="text-3xl font-semibold mb-6">Dobro došli na stranicu za izradu i vođenje natjecanja!</h1>
+            <Link href="/api/auth/login" className="inline-block bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full">
+              Nastavi
+            </Link>
           </div>
-        </div>
       </div>
-      
+
       )}
     </div>
   );
