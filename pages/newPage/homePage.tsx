@@ -16,6 +16,7 @@ export default function Profile({ user }: ProfileProps) {
   const [drawPoints, setDrawPoints] = useState('');
   const [lossPoints, setLossPoints] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const router = useRouter();
 
@@ -185,7 +186,7 @@ export default function Profile({ user }: ProfileProps) {
         <input 
           type="number" 
           className="border p-2 w-full mb-2 rounded transition duration-150 focus:border-blue-500 focus:outline-none" 
-          placeholder="Bodovi za pobijedu" 
+          placeholder="Bodovi za pobjedu" 
           value={winPoints} 
           onChange={e => setWinPoints(e.target.value)} 
         />
@@ -209,11 +210,19 @@ export default function Profile({ user }: ProfileProps) {
         {errorMessage && <div className="text-red-500 mb-2">{errorMessage}</div>}
         
         <button 
+          onMouseOver={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           onClick={handleCreateCompetition}
           disabled={isGenerirajDisabled()}
           className={`bg-blue-600 text-white px-4 py-2 rounded transition duration-150 mb-2 mr-2 
             ${isGenerirajDisabled() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}>
           {isGenerating ? "Generiranje..." : "Generiraj"}
+          {isHovered && isGenerirajDisabled() && (
+          <div className="absolute z-10 w-64 bg-black text-white text-sm rounded p-2 bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-90">
+          Morate popuniti sistem bodovanja i imati između 4 i 8 igrača.
+            <div className="tooltip-arrow" />
+            </div>
+          )}
         </button>
         
         <button 

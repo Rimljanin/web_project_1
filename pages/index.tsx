@@ -42,6 +42,16 @@ const Home: React.FC = () => {
     }
   }, [user]);
 
+  
+  const [showIcons, setShowIcons] = useState(true);
+
+  const toggleIcons = () => {
+    setShowIcons(!showIcons);
+  };
+
+
+
+
   if (isLoading) return <div>LOADING...</div>;
   if (error) return <div>{error.message}</div>;
 
@@ -55,7 +65,8 @@ const Home: React.FC = () => {
               Logout
             </Link>
           </div>
-
+          
+          
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="p-6 bg-white rounded shadow-lg w-96">
               <h1 className="text-2xl font-bold mb-4 text-center">Izaberite opciju:</h1>
@@ -71,12 +82,13 @@ const Home: React.FC = () => {
                   <>
                     <h2 className="text-xl font-semibold mb-4">Vaša natjecanja</h2>
                     {competitions.map(comp => (
-                      <Link href={`/competitions/${comp.id}`} key={comp.id}>
-                        <div className="bg-gray-200 hover:bg-gray-300 hover:shadow-lg transform hover:scale-101 transition-all mb-4 p-4 rounded flex items-center cursor-pointer">
-                          <span>{comp.name}</span>
-                        </div>
+                      <Link href={`/competitions/${comp.id}`} key={comp.id} className="block">
+                          <div className="bg-gray-200 hover:bg-gray-300 hover:shadow-lg transform hover:scale-101 transition-all mb-4 p-4 rounded flex items-center cursor-pointer">
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-xs">{comp.name}</span>
+                          </div>
                       </Link>
-                    ))}
+                  ))}
+
                   </>
                 ) : (
                   <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-5 rounded">
@@ -90,6 +102,8 @@ const Home: React.FC = () => {
         </>
       ) : (
         <div className="min-h-screen bg-space-dark flex items-center justify-center relative overflow-hidden">
+          {showIcons && (
+            <>
           <MovingIcon IconComponent={SportsHandball} startPosition={{ x: 1300, y: 700 }} />
           <MovingIcon IconComponent={SportsBaseballIcon} startPosition={{ x: 400, y: 100 }} />
           <MovingIcon IconComponent={SportsCricketIcon} startPosition={{ x: 700, y: 100 }} />
@@ -137,14 +151,22 @@ const Home: React.FC = () => {
           <MovingIcon IconComponent={Filter5Icon} startPosition={{ x: 1500, y: 150 }} />
           <MovingIcon IconComponent={Filter6Icon} startPosition={{ x: 1750, y: 500 }} />
           <MovingIcon IconComponent={Filter7Icon} startPosition={{ x: 2050, y: 700 }} />
-
+          </>
+          )}
           <div className="p-8 bg-white rounded-xl shadow-xl w-96 z-10 text-center">
             <h1 className="text-3xl font-semibold mb-6">Dobro došli na stranicu za izradu i vođenje natjecanja!</h1>
             <Link href="/api/auth/login" className="inline-block bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full">
               Nastavi
             </Link>
           </div>
-      </div>
+
+          <button
+            onClick={toggleIcons}
+            className="absolute top-4 right-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+          >
+            {showIcons ? 'Isključi ikone' : 'Uključi ikone'}
+          </button>
+        </div>
 
       )}
     </div>
