@@ -60,15 +60,14 @@ const Competition: React.FC = () => {
                     body: JSON.stringify({ competitionId: id }),
                 });
 
-                toast.success('Rezultati su uspješno spremljeni i bodovi su ažurirani!', {
-                    onClose: () => setTimeout(() => router.push("/"), 1000),
-                  });
+                toast.success('Rezultati su uspješno spremljeni i bodovi su ažurirani!')
                 
             } catch (error) {
                 console.error("Error:", error);
                 toast.error("Došlo je do greške prilikom spremanja i ažuriranja.");
             }
             setIsSaving(false);
+            setTimeout(() => router.push("/"), 1000)
         }
     };
 
